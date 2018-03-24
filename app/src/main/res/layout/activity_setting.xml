@@ -14,22 +14,32 @@
         tools:layout_editor_absoluteY="-10dp"
         tools:ignore="MissingConstraints">
 
-        <RadioButton
-            android:id="@+id/radioButton"
+        <Switch
+            android:id="@+id/switch1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
-            android:text="BLE scaning" />
+            android:text="Background Scanning" />
+
+        <Switch
+            android:id="@+id/switch2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Enable Internet Monitoring"
+            tools:layout_editor_absoluteX="0dp"
+            android:layout_marginTop="20dp"
+            tools:layout_editor_absoluteY="68dp" />
+
+        <Switch
+            android:id="@+id/switch3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="autoConnect"
+            tools:layout_editor_absoluteX="0dp"
+            android:layout_marginTop="20dp"
+            tools:layout_editor_absoluteY="68dp" />
 
 
-    <RadioButton
-        android:id="@+id/radioButton2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="connect internet"
-        android:onClick="mqtt_sub"
-        tools:layout_editor_absoluteX="101dp"
-        android:layout_marginTop="40dp"
-        tools:layout_editor_absoluteY="73dp" />
     </LinearLayout>
+
 </android.support.constraint.ConstraintLayout>
