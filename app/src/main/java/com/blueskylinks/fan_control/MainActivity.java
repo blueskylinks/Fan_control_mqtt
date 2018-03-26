@@ -57,6 +57,7 @@ public class MainActivity extends AppCompatActivity {
     SharedPreferences sharedPreferences;
     Boolean mIsBound=false;
     int s4;
+    int s5;
    static Button button;
    int red=Color.RED;
     int colorId;
@@ -208,6 +209,9 @@ public class MainActivity extends AppCompatActivity {
                 data_chage1();
             }
             else data_chage2();
+           s5=arg1.getIntExtra("d3",0);
+           if(s5==1){ data_chage1();}
+           else data_chage2();
         }
     };
 }

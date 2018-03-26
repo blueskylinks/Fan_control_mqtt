@@ -29,6 +29,7 @@ import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import static android.app.PendingIntent.getActivity;
 
@@ -41,23 +42,19 @@ public class SettingActivity extends AppCompatActivity {
     boolean value1 = true;
     boolean value2 = true;
     boolean value3 = true;
-    String checked;
-    String unchecked;
     SharedPreferences sharedPreferences1;
     SharedPreferences sharedPreferences2;
     SharedPreferences sharedPreferences3;
-    public Bgscanning mBoundService=new Bgscanning();
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setting);
-        simpleswitch1=(Switch)findViewById(R.id.switch1);
-        simpleswitch2=(Switch)findViewById(R.id.switch2);
-        simpleswitch3=(Switch)findViewById(R.id.switch3);
+        simpleswitch1=findViewById(R.id.switch1);
+        simpleswitch2=findViewById(R.id.switch2);
+        simpleswitch3=findViewById(R.id.switch3);
         final Intent i=new Intent("Broadcast");
-
+        registerReceiver(broadcastReceiver, new IntentFilter("Broadcast"));
         sharedPreferences1 = getSharedPreferences("isChecked1", 0);
         value1 = sharedPreferences1.getBoolean("isChecked1", value1); // retrieve the value of your key
 
@@ -87,7 +84,6 @@ public class SettingActivity extends AppCompatActivity {
                     }
                 }
         );
-        //registerReceiver(broadcastReceiver, new IntentFilter("Broadcast"));
         simpleswitch3.setChecked(value3);
         simpleswitch3.setOnCheckedChangeListener(
                 new CompoundButton.OnCheckedChangeListener() {
@@ -103,9 +99,7 @@ public class SettingActivity extends AppCompatActivity {
                     }
                 }
         );
-
     }
-
 
 //connect to internet button on
     public void mqtt_sub()  {
@@ -158,16 +152,24 @@ public class SettingActivity extends AppCompatActivity {
             Log.i("excep ",String.valueOf(me));
             me.printStackTrace();
         }
-
     }
 
     BroadcastReceiver broadcastReceiver =  new BroadcastReceiver() {
         @Override
         public void onReceive(Context arg0, Intent arg1) {
-         //   b1=findViewById(R.id.button2);
-            //Toast.makeText(context, "Intent Detected.", Toast.LENGTH_LONG).show();
             String s1 = arg1.getStringExtra("D1");
             Log.i("BLE,,,,,,,",""+s1);
+           s2=arg1.getStringExtra("d");
+           Log.i("json object data is",s2);
+            try {
+                JSONObject jsonObject=new JSONObject(s2);
+                int j=jsonObject.getInt("lr[0]");
+                Intent i=new Intent("broadcastname");
+                i.putExtra("d3",j);
+                sendBroadcast(i);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
            // TextView t1 = (TextView) findViewById(R.id.tv);
     };
