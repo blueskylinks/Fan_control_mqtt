@@ -145,7 +145,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void data_chage2(){
        b1=findViewById(R.id.button1);
-        b1.setBackgroundColor(Color.TRANSPARENT);
+        b1.setBackgroundColor(Color.GREEN);
     }
 
 
@@ -210,6 +210,7 @@ public class MainActivity extends AppCompatActivity {
             }
             else data_chage2();
            s5=arg1.getIntExtra("d3",0);
+           Log.i("JsonObject value",String.valueOf(s5));
            if(s5==1){ data_chage1();}
            else data_chage2();
         }

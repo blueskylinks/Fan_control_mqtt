@@ -1,6 +1,4 @@
 package com.blueskylinks.fan_control;
-
-import android.bluetooth.BluetoothGatt;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -50,18 +48,18 @@ public class SettingActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setting);
-        simpleswitch1=findViewById(R.id.switch1);
-        simpleswitch2=findViewById(R.id.switch2);
-        simpleswitch3=findViewById(R.id.switch3);
-        final Intent i=new Intent("Broadcast");
-        registerReceiver(broadcastReceiver, new IntentFilter("Broadcast"));
+        simpleswitch1 = findViewById(R.id.switch1);
+        simpleswitch2 = findViewById(R.id.switch2);
+        simpleswitch3 = findViewById(R.id.switch3);
+        final Intent i = new Intent("Broadcast");
+
         sharedPreferences1 = getSharedPreferences("isChecked1", 0);
         value1 = sharedPreferences1.getBoolean("isChecked1", value1); // retrieve the value of your key
 
         sharedPreferences2 = getSharedPreferences("isChecked", 0);
         value2 = sharedPreferences2.getBoolean("isChecked", value2); // retrieve the value of your key
 
-        sharedPreferences3= getSharedPreferences("isChecked2", 0);
+        sharedPreferences3 = getSharedPreferences("isChecked2", 0);
         value3 = sharedPreferences3.getBoolean("isChecked2", value3);
 
         simpleswitch1.setChecked(value1);
@@ -69,18 +67,26 @@ public class SettingActivity extends AppCompatActivity {
                 new CompoundButton.OnCheckedChangeListener() {
                     @Override
                     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                        if (isChecked) { isChecked=true; /*ma.start()*/;sharedPreferences1.edit().putBoolean("isChecked1", true).apply(); }
-                        else {sharedPreferences1.edit().putBoolean("isChecked1", false).apply();}
+                        if (isChecked) {
+                            isChecked = true; /*ma.start()*/
+                            sharedPreferences1.edit().putBoolean("isChecked1", true).apply();
+                        } else {
+                            sharedPreferences1.edit().putBoolean("isChecked1", false).apply();
+                        }
                     }
                 }
         );
+        registerReceiver(broadcastReceiver, new IntentFilter("Broadcast"));
         simpleswitch2.setChecked(value2);
         simpleswitch2.setOnCheckedChangeListener(
                 new CompoundButton.OnCheckedChangeListener() {
                     @Override
                     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                        if (isChecked) { isChecked=true; mqtt_sub();sharedPreferences2.edit().putBoolean("isChecked", true).apply();}
-                        else sharedPreferences2.edit().putBoolean("isChecked", false).apply();
+                        if (isChecked) {
+                            isChecked = true;
+                            mqtt_sub();
+                            sharedPreferences2.edit().putBoolean("isChecked", true).apply();
+                        } else sharedPreferences2.edit().putBoolean("isChecked", false).apply();
                     }
                 }
         );
@@ -89,25 +95,29 @@ public class SettingActivity extends AppCompatActivity {
                 new CompoundButton.OnCheckedChangeListener() {
                     @Override
                     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                        if (isChecked) { isChecked=true;sharedPreferences3.edit().putBoolean("isChecked2", true).apply();
-                         i.putExtra("d2",isChecked);
+                        if (isChecked) {
+                            isChecked = true;
+                            sharedPreferences3.edit().putBoolean("isChecked2", true).apply();
+                            i.putExtra("d2", isChecked);
+                            sendBroadcast(i);
+                        } else {
+                            sharedPreferences3.edit().putBoolean("isChecked2", false).apply();
+                            i.putExtra("d2", isChecked);
                             sendBroadcast(i);
                         }
-                        else {sharedPreferences3.edit().putBoolean("isChecked2", false).apply();
-                            i.putExtra("d2",isChecked);
-                            sendBroadcast(i);}
                     }
                 }
         );
     }
 
-//connect to internet button on
-    public void mqtt_sub()  {
+    //connect to internet button on
+    public void mqtt_sub() {
         MqttCallback mqtt_callback = new MqttCallback() {
             @Override
             public void connectionLost(Throwable throwable) {
 
             }
+
             @Override
             public void messageArrived(String s, MqttMessage mqttMessage) throws Exception {
                 //t1.setText(mqttMessage.toString());
@@ -115,10 +125,8 @@ public class SettingActivity extends AppCompatActivity {
                 intent.setAction("CUSTOM_INTENT");
                 intent.putExtra("D1", mqttMessage.toString());
                 sendBroadcast(intent);
-
-                String s1= mqttMessage.toString();
-
-                Log.i(s,mqttMessage.toString());
+                // String s1= mqttMessage.toString();
+                Log.i(s, mqttMessage.toString());
             }
 
             @Override
@@ -128,8 +136,8 @@ public class SettingActivity extends AppCompatActivity {
             }
         };
 
-        String broker       = "tcp://13.126.9.228:1883";
-        String clientId     = "4";
+        String broker = "tcp://13.126.9.228:1883";
+        String clientId = "4";
         MemoryPersistence persistence = new MemoryPersistence();
 
         try {
@@ -141,39 +149,32 @@ public class SettingActivity extends AppCompatActivity {
             Log.i("Connected", "C");
             sampleClient.setCallback(mqtt_callback);
             sampleClient.subscribe("home");
-            Log.i("...","Subscribing on topic");
+            Log.i("...", "Subscribing on topic");
 
 
-        } catch(MqttException me) {
-            Log.i("reason ",String.valueOf(me.getReasonCode()));
-            Log.i("msg ",String.valueOf(me.getMessage()));
-            Log.i("loc ",String.valueOf(me.getLocalizedMessage()));
-            Log.i("cause ",String.valueOf(me.getCause()));
-            Log.i("excep ",String.valueOf(me));
+        } catch (MqttException me) {
+            Log.i("reason ", String.valueOf(me.getReasonCode()));
+            Log.i("msg ", String.valueOf(me.getMessage()));
+            Log.i("loc ", String.valueOf(me.getLocalizedMessage()));
+            Log.i("cause ", String.valueOf(me.getCause()));
+            Log.i("excep ", String.valueOf(me));
             me.printStackTrace();
         }
     }
 
-    BroadcastReceiver broadcastReceiver =  new BroadcastReceiver() {
+    BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context arg0, Intent arg1) {
             String s1 = arg1.getStringExtra("D1");
-            Log.i("BLE,,,,,,,",""+s1);
-           s2=arg1.getStringExtra("d");
-           Log.i("json object data is",s2);
-            try {
-                JSONObject jsonObject=new JSONObject(s2);
-                int j=jsonObject.getInt("lr[0]");
-                Intent i=new Intent("broadcastname");
-                i.putExtra("d3",j);
-                sendBroadcast(i);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+            Log.i("BLE,,,,,,,", "" + s1);
+            s2 = arg1.getStringExtra("d");
+            // TextView t1 = (TextView) findViewById(R.id.tv);
         }
-           // TextView t1 = (TextView) findViewById(R.id.tv);
+
+        ;
     };
-    }
+
+}
 
 
 
